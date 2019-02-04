@@ -1,45 +1,69 @@
-# gas-sheets-merge
+# Merge Goole Sheets (Google Apps Script for Sheets)
+
 Merges two Google Sheets
 
 ## Use
 
-The names of the src spreadsheet, src sheet and dst sheet and at the end of this code.
-The onMerge() function is involved through the menu bar in Google Sheets (CUSTOM > Merge).
-Even if you don't ready anything else, please read through the example below.
+The identifier of the spreadsheet and names of the sheets are found at the end of
+the source code.
+Even if you don't ready anything else, please read through the example.
 
 ## Definitions
 
 The first row of the src/dst sheet should contain labels for each column.
 The left-most label in the dst sheet is considered the keyLabel, and the values in that
-column are considered "keys". These keys are used to match rows between the src and dst
+column are considered *keys*. These keys are used to match rows between the src and dst
 sheets.
 
 ## Functionality
 
-The function doMerge() should be called from the destination sheet.
+The function `doMerge()` should be called from the destination sheet.
 It walks the src sheet row-by-row.  If the key doesn't already exist in the dst, a new
 row is added to the dst.  In the dst sheet, the row with the corresponding key is populated
 with values from the src sheet.
 
 ## Example
 
-Assume a source sheet *src* and destination sheet *dst*.
+In this example, we start with a source sheet exported from a LDAP system containing the 
+usernames, their preferred names and the person type.
+The destination sheet already contains some of the usernames imported earlier. These
+names were manually supplmented with the projects that they are working on.
+The script will add the missing the usernames from the source sheet to the destination
+sheet.  Then it writes the preferred names and person type for each user.
 
-### src sheet
+### Input
 
-| Class  | Animal     | Family         |
-| ------ | ---------- | -------------- |
-| mammal | moose      | cervidae       |
-| mammal | dolphin    | delphinidae    |
-| fish   | pufferfish | tetraodontidae |
+**Source Sheet**
 
+| Preferred Name	| Username	| Person Type |
+| -------------- | -------- | ----------- |
+| Johan          |	jvonk	   | Employee    |
+| Sander         |	svonk    |	Employee    |
+| Barrie         |	brlevins |	Employee    |
+| Tiger          |	tiger    |	Cat         |
+| Owen           |	owen     |	Cat         |
 
-### dst sheet
+**Destination Sheet**
 
-| Animal     | Class  | Food   |
-| ---------- | ------ | ------ |
-| moose      | mammal | plants |
-| deer       | mammal | plants |
+| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
+| -------- | ----------- | ------- | --------- | --------- |
+| jvonk    |	Employee	   | Student	| School    |	Java      |
+| cvonk    |	Employee	   | Adult	  | Chores    |	Embedded  |
+
+## Run the Script
+
+## Output
+
+**Destination Sheet**
+
+| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
+| -------- | ----------- | ------- | --------- | --------- |
+| jvonk    |	Employee	   | Student	| School    |	Java      |
+| cvonk    |         	   |      	  | Chores    |	Embedded  |
+| brlevins | Employee    |         |           |           |
+| tiger    | Cat         |         |           |           |
+| owen     | Cat         |         |           |           |
+
 
 ### step-by-step
 
