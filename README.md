@@ -1,6 +1,8 @@
 # Merge Google Sheets (Google Apps Script for Sheets)
 
-Merges two Google Sheets
+Combines the information from two Google Sheets.  In the example it is used to 
+combine *people* information exported from a LDAP system, to a project
+assignment list.
 
 ## Use
 
@@ -8,7 +10,7 @@ The identifier of the spreadsheet and names of the sheets are found at the end o
 the source code. Even if you don't ready anything else, please read through the 
 example.
 
-The script (Project Role Allocations)[https://github.com/cvonk/gas-sheets-projectrolealloc]
+The script [Project Role Allocations](https://github.com/cvonk/gas-sheets-projectrolealloc)
 can be used to visualize the resulting data in a pivot table.
 
 ## Definitions
@@ -83,8 +85,7 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ## What happens
 
-The keyLabel is "Username" since the top-left entry in the destination sheet.  
-In this example, the function `doMerge()` will:
+The keyLabel is "Username" since the top-left entry in the destination sheet. In this example, the function `doMerge()` will:
 
  1. Empty the columns in the dst sheet that will be sourced from the src sheet,
     except for the first column that contains the key values;
