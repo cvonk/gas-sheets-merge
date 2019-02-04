@@ -27,46 +27,7 @@
 * 
 * EXAMPLE:
 *
-* src sheet                                    dst sheet
-* +--------+------------+----------------+     +------------+--------+--------+
-* | Class  | Animal     | Family         |     | Animal     | Class  | Food   |
-* +--------+------------+----------------+     +------------+--------+--------+
-* | mammal | moose      | cervidae       |     | moose      | mammal | plants |
-* | mammal | dolphin    | delphinidae    |     | deer       | mammal | plants |
-* | fish   | pufferfish | tetraodontidae |     +------------+--------+--------+
-* +--------+------------+----------------+     
-*
-* The keyLabel is "Animal" since the top-left entry in the dst sheet.  In this example, the
-* function doMerge() will:
-*
-*  1. empty the columns in the dst sheet       +------------+--------+--------+
-*     that will be sourced from the src sheet, | Animal     | Class  | Food   |
-*     except for the first column that         +------------+--------+--------+
-*     contains the key values;                 | moose      |        | plants |
-*                                              | deer       |        | plants |
-*                                              +------------+--------+--------+
-*
-*  2. appends rows for which there is no       +------------+--------+--------+
-*     corresponding key value in the dst.      | Animal     | Class  | Food   |
-*                                              +------------+--------+--------+
-*                                              | moose      |        | plants |
-*                                              | deer       |        | plants |
-*                                              | dophin     |        |        |
-*                                              | pufferfish |        |        |
-*                                              +------------+--------+--------+
-*
-*  3. copy the src columns that also exist     +------------+--------+--------+
-*     in the dst sheet.                        | Animal     | Class  | Food   |
-*                                              +------------+--------+--------+
-*                                              | moose      | mammal | plants |
-*                                              | deer       |        | plants |
-*                                              | dophin     | mammal |        |
-*                                              | pufferfish | fish   |        |
-*                                              +------------+--------+--------+
-* 
-*  4. Note: the empty class value for animal "deer" indicates that it (no longer) exists
-*     in the src.  One could delete or hide the corresponding row.  Also, the Food for
-*     "dophin" and "pufferfish" is still blank.
+* refer to https://github.com/cvonk/gas-sheets-merge/blob/master/README.md
 *
 * LEGAL:
 *
@@ -183,9 +144,9 @@ var OnMerge = {};
     }  
   }
   
-  this.main = function(srcSpreadsheetName, srcSheetName, dstSheetName) {
+  this.main = function(srcSpreadsheetId, srcSheetName, dstSheetName) {
 
-    var srcSpreadsheet = Common.spreadsheetOpenByName(srcSpreadsheetName);
+    var srcSpreadsheet = Common.spreadsheetOpenById(srcSpreadsheetId);
     var srcSheet = Common.sheetOpen(srcSpreadsheet, sheetName = srcSheetName, minNrOfDataRows = 2, requireLabelInA1 = true );
     var srcValues = srcSheet.getDataRange().getValues();
     var srcHeader = srcValues.shift();
@@ -219,7 +180,7 @@ var OnMerge = {};
 
 function onMerge() {
 
-  OnMerge.main(srcSpreadsheetName = "go-persons", 
+  OnMerge.main(srcSpreadsheetId = "REPLACE_WITH_YOUR_SHEET_ID",
                srcSheetName = "go-persons", 
                dstSheetName = "persons");
 }
