@@ -38,9 +38,9 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ### Input
 
-**Source Sheet** (*go-persons*)
+**Source Sheet** (*go-persons*) in *Source Spreadsheet*
 
-| Preferred Name| Username	 | Person Type |
+| Preferred Name | Username	 | Person Type |
 | -------------- | --------- | ----------- |
 | Johan          |	jvonk	   | Employee    |
 | Sander         |	svonk    |	Employee   |
@@ -103,20 +103,10 @@ newly imported roles are still blank and need to be filled in by hand.
 | Username | Person Type |	Role   | Project 1 | Project 2 |
 | -------- | ----------- | ------- | --------- | --------- |
 | jvonk    | Employee	   | Student | School    | Java      |
-| cvonk    |         	   |      	 | Chores    | Embedded  |
+| cvonk    |         	   | Adult   | Chores    | Embedded  |
+| svonk    | Employee	   |         |           |           |
 | brlevins | Employee    |         |           |           |
 | tiger    | Cat         |         |           |           |
 | owen     | Cat         |         |           |           |
 
-
-### Filter
-
-The empty *Person Type* and *Role* fields for Username `cvonk` indicates that 
-that user no longer exists.  One could now remove the persons that are no longer there.
-
-| Username | Person Type |	Role   | Project 1 | Project 2 |
-| -------- | ----------- | ------- | --------- | --------- |
-| jvonk    | Employee	   | Student | School    | Java      |
-| brlevins | Employee    |         |           |           |
-| tiger    | Cat         |         |           |           |
-| owen     | Cat         |         |           |           |
+The empty *Person Type* for Username `cvonk` indicates that that user no longer exists.  One could now remove the persons that are no longer there.
