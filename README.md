@@ -1,4 +1,4 @@
-# Merge Goole Sheets (Google Apps Script for Sheets)
+# Merge Google Sheets (Google Apps Script for Sheets)
 
 Merges two Google Sheets
 
@@ -52,6 +52,52 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ## Run the Script
 
+  Either from the script editor ("Tools > Script Editor), or by adding a
+  bit of code to create a menu item, such as 
+
+```javascript
+    function onOpen() {
+      SpreadsheetApp.getUi()
+         .createMenu("CUSTOM")
+         .addItem("Merge people", "onMerge").addToUi();
+    }
+```
+
+  The sheet names are declared at the end of the script.  Remember to fill in
+  your source spreadsheet identifier.  
+
+```javascript
+    function onMerge() {
+      OnMerge.main(srcSpreadsheetId = "<YOUR_SHEET_ID>",
+                   srcSheetName = "go-persons", 
+                   dstSheetName = "persons");
+    }
+```
+
+  Running `onMerge()` generates the sheet called *role-alloc-raw* and
+  the pivot table *role-alloc*.  If the sheets already exist, it will 
+  reuse them.
+
+## What happens
+
+### step-by-step
+
+The keyLabel is "Username" since the top-left entry in the destination sheet.  
+In this example, the function doMerge() will:
+
+ 1. Empty the columns in the dst sheet that will be sourced from the src sheet,
+    except for the first column that contains the key values;
+    
+ 2. appends rows for which there is no corresponding key value in the dst.
+
+ 3. copy the src columns that also exist in the dst sheet.
+    
+The empty *Person Type* and *Role* fields for Username *cvonk* indicates that 
+that user no longer exists. 
+
+Also, the roles and project assignments for the newly imported roles are still
+blank and need to be filled in by hand.
+
 ## Output
 
 **Destination Sheet**
@@ -64,42 +110,13 @@ sheet.  Then it writes the preferred names and person type for each user.
 | tiger    | Cat         |         |           |           |
 | owen     | Cat         |         |           |           |
 
+### Filter
 
-### step-by-step
+Filter out the people that left `Data > Create a Filter > filter on Person Type == ""`
 
-The keyLabel is "Animal" since the top-left entry in the dst sheet.  In this example, the
-function doMerge() will:
-
- 1. empty the columns in the dst sheet
-    that will be sourced from the src sheet,
-    except for the first column that
-    contains the key values;
-
-    | Animal     | Class  | Food   |
-    | ---------- | ------ | ------ |
-    | moose      |        | plants |
-    | deer       |        | plants |
-
-
- 2. appends rows for which there is no corresponding key value in the dst.
-
-    | Animal     | Class  | Food   |
-    | ---------- | ------ | ------ |
-    | moose      |        | plants |
-    | deer       |        | plants |
-    | dophin     |        |        |
-    | pufferfish |        |        |
-
- 3. copy the src columns that also exist in the dst sheet.
-    
-    | Animal     | Class  | Food   |
-    | ---------- | ------ | ------ |
-    | moose      | mammal | plants |
-    | deer       |        | plants |
-    | dophin     | mammal |        |
-    | pufferfish | fish   |        |
-
-
- 4. Note: the empty class value for animal "deer" indicates that it (no longer) exists
-    in the src.  One could delete or hide the corresponding row.  Also, the Food for
-    "dophin" and "pufferfish" is still blank.
+| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
+| -------- | ----------- | ------- | --------- | --------- |
+| jvonk    |	Employee	   | Student	| School    |	Java      |
+| brlevins | Employee    |         |           |           |
+| tiger    | Cat         |         |           |           |
+| owen     | Cat         |         |           |           |
