@@ -5,8 +5,11 @@ Merges two Google Sheets
 ## Use
 
 The identifier of the spreadsheet and names of the sheets are found at the end of
-the source code.
-Even if you don't ready anything else, please read through the example.
+the source code. Even if you don't ready anything else, please read through the 
+example.
+
+The script (Project Role Allocations)[https://github.com/cvonk/gas-sheets-projectrolealloc]
+can be used to visualize the resulting data in a pivot table.
 
 ## Definitions
 
@@ -35,20 +38,20 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 **Source Sheet**
 
-| Preferred Name	| Username	| Person Type |
-| -------------- | -------- | ----------- |
+| Preferred Name| Username	 | Person Type |
+| -------------- | --------- | ----------- |
 | Johan          |	jvonk	   | Employee    |
-| Sander         |	svonk    |	Employee    |
-| Barrie         |	brlevins |	Employee    |
-| Tiger          |	tiger    |	Cat         |
-| Owen           |	owen     |	Cat         |
+| Sander         |	svonk    |	Employee   |
+| Barrie         |	brlevins |	Employee   |
+| Tiger          |	tiger    |	Cat        |
+| Owen           |	owen     |	Cat        |
 
 **Destination Sheet**
 
-| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
-| -------- | ----------- | ------- | --------- | --------- |
-| jvonk    |	Employee	   | Student	| School    |	Java      |
-| cvonk    |	Employee	   | Adult	  | Chores    |	Embedded  |
+| Username | Person Type |	Role    |	Project 1 |	Project 2 |
+| -------- | ----------- | -------- | --------- | --------- |
+| jvonk    |	Employee	 | Student	| School    |	Java      |
+| cvonk    |	Employee	 | Adult	  | Chores    |	Embedded  |
 
 ## Run the Script
 
@@ -80,10 +83,8 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ## What happens
 
-### step-by-step
-
 The keyLabel is "Username" since the top-left entry in the destination sheet.  
-In this example, the function doMerge() will:
+In this example, the function `doMerge()` will:
 
  1. Empty the columns in the dst sheet that will be sourced from the src sheet,
     except for the first column that contains the key values;
@@ -102,21 +103,21 @@ blank and need to be filled in by hand.
 
 **Destination Sheet**
 
-| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
+| Username | Person Type |	Role   | Project 1 | Project 2 |
 | -------- | ----------- | ------- | --------- | --------- |
-| jvonk    |	Employee	   | Student	| School    |	Java      |
-| cvonk    |         	   |      	  | Chores    |	Embedded  |
+| jvonk    | Employee	   | Student | School    | Java      |
+| cvonk    |         	   |      	 | Chores    | Embedded  |
 | brlevins | Employee    |         |           |           |
 | tiger    | Cat         |         |           |           |
 | owen     | Cat         |         |           |           |
 
 ### Filter
 
-Filter out the people that left `Data > Create a Filter > filter on Person Type == ""`
+One could now remove the persons that are no longer there.
 
-| Username	| Person Type |	Role    |	Project 1 |	Project 2 |
+| Username | Person Type |	Role   | Project 1 | Project 2 |
 | -------- | ----------- | ------- | --------- | --------- |
-| jvonk    |	Employee	   | Student	| School    |	Java      |
+| jvonk    | Employee	   | Student | School    | Java      |
 | brlevins | Employee    |         |           |           |
 | tiger    | Cat         |         |           |           |
 | owen     | Cat         |         |           |           |
