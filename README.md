@@ -38,7 +38,7 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ### Input
 
-**Source Sheet**
+**Source Sheet** (*go-persons*)
 
 | Preferred Name| Username	 | Person Type |
 | -------------- | --------- | ----------- |
@@ -48,7 +48,7 @@ sheet.  Then it writes the preferred names and person type for each user.
 | Tiger          |	tiger    |	Cat        |
 | Owen           |	owen     |	Cat        |
 
-**Destination Sheet**
+**Destination Sheet** (*persons*)
 
 | Username | Person Type |	Role    |	Project 1 |	Project 2 |
 | -------- | ----------- | -------- | --------- | --------- |
@@ -79,13 +79,14 @@ sheet.  Then it writes the preferred names and person type for each user.
     }
 ```
 
-  Running `onMerge()` generates the sheet called *role-alloc-raw* and
-  the pivot table *role-alloc*.  If the sheets already exist, it will 
-  reuse them.
+  Running `onMerge()` updates the columns in the destination sheet that also exist in the
+  source sheet.
 
 ## What happens
 
-The keyLabel is "Username" since the top-left entry in the destination sheet. In this example, the function `doMerge()` will:
+The keyLabel is `Username` since the top-left entry in the destination sheet. 
+
+In this example, the function `doMerge()` will:
 
  1. Empty the columns in the dst sheet that will be sourced from the src sheet,
     except for the first column that contains the key values;
@@ -94,15 +95,10 @@ The keyLabel is "Username" since the top-left entry in the destination sheet. In
 
  3. copy the src columns that also exist in the dst sheet.
     
-The empty *Person Type* and *Role* fields for Username *cvonk* indicates that 
-that user no longer exists. 
-
-Also, the roles and project assignments for the newly imported roles are still
-blank and need to be filled in by hand.
-
 ## Output
 
-**Destination Sheet**
+The *destination sheet* is updated. The roles and project assignments for the
+newly imported roles are still blank and need to be filled in by hand.
 
 | Username | Person Type |	Role   | Project 1 | Project 2 |
 | -------- | ----------- | ------- | --------- | --------- |
@@ -112,9 +108,11 @@ blank and need to be filled in by hand.
 | tiger    | Cat         |         |           |           |
 | owen     | Cat         |         |           |           |
 
+
 ### Filter
 
-One could now remove the persons that are no longer there.
+The empty *Person Type* and *Role* fields for Username `cvonk` indicates that 
+that user no longer exists.  One could now remove the persons that are no longer there.
 
 | Username | Person Type |	Role   | Project 1 | Project 2 |
 | -------- | ----------- | ------- | --------- | --------- |
