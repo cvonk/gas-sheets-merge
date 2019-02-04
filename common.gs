@@ -40,13 +40,23 @@ var Common = {};
     return undefined;
   }
 
+  this.spreadsheetOpenById = function(spreadsheetId) {
+
+    var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    if (spreadsheet == undefined) {
+        throw "Spreadsheet \"" + spreadsheetId + "\" not found";
+      return undefined;
+    }
+    return spreadsheet;  
+  }
+  
   this.sheetCreate = function(spreadsheet, sheetName, overwriteSheet) {
 
     var sheet = spreadsheet.getSheetByName(sheetName);
     if (sheet == undefined) {
       sheet = spreadsheet.insertSheet(sheetName);
       if (sheet == undefined) {
-        throw "Can't creaet sheet \"" + sheetName + "\" in spreadsheet \"" + spreadsheet.getName() + "\"";
+        throw "Can't create sheet \"" + sheetName + "\" in spreadsheet \"" + spreadsheet.getName() + "\"";
       }
     } else {
       if (overwriteSheet) {
