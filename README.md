@@ -1,4 +1,4 @@
-# Merge Google Sheets (Google Apps Script for Sheets)
+# Merge Two Google Sheets (Google Apps Script for Sheets)
 
 Combines the information from two Google Sheets.  For example, the script can be used to 
 combine *people* information exported from a LDAP system with a project assignment list.
