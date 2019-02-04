@@ -7,7 +7,7 @@
 *                         https://github.com/cvonk/gas-sheets-merge
 * USE:
 *
-* The names of the src spreadsheet, src sheet and dst sheet and at the end of this code.
+* The names of the src spreadsheet, src sheet and dst sheet are at the end of this code.
 * The onMerge() function is involved through the menu bar in Google Sheets (CUSTOM > Merge).
 * Even if you don't ready anything else, please read through the example below.
 *
@@ -39,7 +39,7 @@
 * The keyLabel is "Animal" since the top-left entry in the dst sheet.  In this example, the
 * function doMerge() will:
 *
-*  1. empty the columnns in the dst sheet      +------------+--------+--------+
+*  1. empty the columns in the dst sheet       +------------+--------+--------+
 *     that will be sourced from the src sheet, | Animal     | Class  | Food   |
 *     except for the first column that         +------------+--------+--------+
 *     contains the key values;                 | moose      |        | plants |
@@ -86,88 +86,10 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// add CUSTOM to menu bar
-
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  ui.createMenu('CUSTOM')
-  .addItem('Merge', 'onMerge')
-  .addToUi();
-}
-
 // update dst sheet based on src sheet
 
 var OnMerge = {};
 (function() {
-  
-  // open named spreadsheets from Google Drive
-  
-  this.openSpreadsheetByName = function(fname) {
-    
-    var files = DriveApp.searchFiles('mimeType = "' + MimeType.GOOGLE_SHEETS + '" and title contains "' + fname + '"');
-    while (files.hasNext()) {
-      return SpreadsheetApp.open(files.next());
-    }
-    return null;
-  }
-  
-  this.openNamedSpreadsheet = function(spreadsheetName) {
-    
-    var spreadsheet = this.openSpreadsheetByName(spreadsheetName);
-    if (spreadsheet == undefined) {
-      throw "Spreadsheet \"" + spreadsheetName + "\" not found on gDrive";
-    }
-    return spreadsheet;  
-  }
-  
-  this.openSheet = function(sheetName, minNrOfDataRows, requireLabelInA1, spreadsheetName) {
-    
-    var spreadsheet;
-    if (spreadsheetName == undefined) {
-      spreadsheetName = "active spreadsheet";
-      spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    } else {
-      spreadsheet = this.openNamedSpreadsheet(spreadsheetName);
-    }
-    var sheet = spreadsheet.getSheetByName(sheetName);
-    if (sheet == undefined) {
-      throw "Sheet \"" + sheetName + "\" not found in spreadsheet \"" + spreadsheetName + "\"";
-    }
-    if (requireLabelInA1 && sheet.getRange("A1").isBlank()) {
-      throw "Sheet \"" + sheetName + "\" (part of " + spreadsheetName + ") doesn't have a keyLabel in A1";
-    }
-    var dbg = sheet.getDataRange().getNumRows();
-    if (sheet.getDataRange().getNumRows() < minNrOfDataRows) {
-      throw "Sheet \"" + sheetName + "\" (part of " + spreadsheetName + ") doesn't at least " + minNrOfDataRows + " rows";
-    }
-    return sheet;
-  }
-  
-  this.srcSheetGetValues = function(sheet) {
-    
-    var range = sheet.getDataRange();
-    return range.getValues();
-  }
-  
-  // returns 1-dim array with header values
-  
-  this.dstSheetGetHeaderValues = function(dstSheet) {
-    
-    var dstHeaderNumOfCols = dstSheet.getDataRange().getNumColumns();     
-    return dstSheet.getRange(1, 1, 1, dstHeaderNumOfCols).getValues()[0];
-  }
-  
-  // returns data range in sheet, excluding  header row
-  
-  this.dstSheetGetDataRange = function(dstSheet) {
-    
-    var dstNumCols = dstSheet.getDataRange().getNumColumns();
-    var dstNumRows = dstSheet.getDataRange().getNumRows();
-    if (dstNumRows > 1) {
-      return dstSheet.getRange(2, 1, dstNumRows-1, dstNumCols);  
-    }
-    return undefined;
-  }
   
   // create an array with the column labels that exist in both the src and dst sheets.
   //
@@ -175,11 +97,9 @@ var OnMerge = {};
   // in the src sheet.
   // Include column index in src and dst sheet.
   
-  this.dstHeader2columns = function(srcHeader, dstSheet)  {
+  this.dstHeader2columns = function(srcHeader, dstHeader)  {
     
     var columns = {};
-    var dstHeader = this.dstSheetGetHeaderValues(dstSheet);
-    
     dstHeader.forEach(function(lbl) {
       
       var srcColIdx = srcHeader.indexOf(lbl);
@@ -194,6 +114,7 @@ var OnMerge = {};
     });
     return columns;
   }
+  
   
   // clear the columns in the destination sheet (except the key column) that we're about to updated
   // (so later, empty fields indicate: a row that is no longer used)
@@ -239,7 +160,7 @@ var OnMerge = {};
     
     dstSheet.appendRow(["new row"]);
     
-    var dstRange = this.dstSheetGetDataRange(dstSheet);
+    var dstRange = Common.sheetGetDataRange(dstSheet);
     var columnIdx = columns[keyLabel].dst +1;
     
     dstRange.getCell(dstRange.getHeight(), columnIdx).setValue(key);  // -1 because no header row, getCell is 1-based
@@ -264,14 +185,17 @@ var OnMerge = {};
   
   this.main = function(srcSpreadsheetName, srcSheetName, dstSheetName) {
 
-    var srcSheet = this.openSheet(srcSheetName, 2, false, srcSpreadsheetName);
-    var dstSheet = this.openSheet(dstSheetName, 1, true);
-    var srcValues = this.srcSheetGetValues(srcSheet);  // 1st row of src (and dst) is a header
+    var srcSpreadsheet = Common.spreadsheetOpenByName(srcSpreadsheetName);
+    var srcSheet = Common.sheetOpen(srcSpreadsheet, sheetName = srcSheetName, minNrOfDataRows = 2, requireLabelInA1 = true );
+    var srcValues = srcSheet.getDataRange().getValues();
     var srcHeader = srcValues.shift();
     
-    var columns = this.dstHeader2columns(srcHeader, dstSheet);
+    var dstSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    var dstSheet = Common.sheetOpen(dstSpreadsheet, sheetName = dstSheetName, minNrOfDataRows = 1, requireLabelInA1 = true);
+    var dstHeader = Common.sheetGetHeaderRange(dstSheet).getValues()[0];    
+    var columns = this.dstHeader2columns(srcHeader, dstHeader);
     var keyLabel = Object.keys(columns)[0];
-    var dstRange = this.dstSheetGetDataRange(dstSheet);
+    var dstRange = Common.sheetGetDataRange(dstSheet);
     
     this.dstRangeClearColumns(columns, keyLabel, dstRange);
     
@@ -294,9 +218,8 @@ var OnMerge = {};
 }).apply(OnMerge);
 
 function onMerge() {
-  var srcSpreadsheetName = "master";      // go-persons
-  var srcSheetName = srcSpreadsheetName;  // tab has same name as workbook
-  var dstSheetName = "test";
-  
-  OnMerge.main(srcSpreadsheetName, srcSheetName, dstSheetName);
+
+  OnMerge.main(srcSpreadsheetName = "go-persons", 
+               srcSheetName = "go-persons", 
+               dstSheetName = "persons");
 }
