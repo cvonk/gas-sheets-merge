@@ -9,7 +9,7 @@ The identifier of the spreadsheet and names of the sheets are found at the end o
 the source code. Even if you don't ready anything else, please read through the 
 example.
 
-The script [Project Role Allocations](https://github.com/cvonk/gas-sheets-projectrolealloc)
+The script [Project Role Allocations](https://github.com/cvonk/gas-sheets-project_role_alloc)
 can be used to visualize the resulting data in a pivot table.
 
 ## Definitions
