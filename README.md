@@ -56,25 +56,21 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ## Run the Script
 
-  Either from the script editor ("Tools > Script Editor), or by adding a
-  bit of code to create a menu item, such as 
+  Create a script such as `onopen.gs` that contains an opOpen() function to add an
+  item to the Google Scripts menu bar.  Remember to fill in your source spreadsheet
+  identifier.  
 
 ```javascript
+
+    function onOpen_merge() {
+      onMerge({srcSpreadsheetId: "YourSpreadSheetId", // eg output from LDAP
+               srcSheetName: "go-persons", 
+               dstSheetName: "persons"});    
+    }
     function onOpen() {
       SpreadsheetApp.getUi()
-         .createMenu("CUSTOM")
-         .addItem("Merge people", "onMerge").addToUi();
-    }
-```
-
-  The sheet names are declared at the end of the script.  Remember to fill in
-  your source spreadsheet identifier.  
-
-```javascript
-    function onMerge() {
-      OnMerge.main(srcSpreadsheetId = "<YOUR_SHEET_ID>",
-                   srcSheetName = "go-persons", 
-                   dstSheetName = "persons");
+         .createMenu("YourName")
+         .addItem("Merge with go-persons", 'onOpen_merge').addToUi();
     }
 ```
 
