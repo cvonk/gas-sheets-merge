@@ -1,5 +1,5 @@
 "use strict";
-/*                                     MERGE GOOGLE SHEETS
+/*                                    MERGE GOOGLE SHEETS
 *
 *                                         Coert Vonk
 *                                        February 2019
@@ -49,8 +49,7 @@
 
 // update dst sheet based on src sheet
 
-var OnMerge = {};
-(function() {
+function onMerge(parameters) {
   
   // create an array with the column labels that exist in both the src and dst sheets.
   //
@@ -58,7 +57,7 @@ var OnMerge = {};
   // in the src sheet.
   // Include column index in src and dst sheet.
   
-  this.dstHeader2columns = function(srcHeader, dstHeader)  {
+  function _dstHeader2columns(srcHeader, dstHeader)  {
     
     var columns = {};
     dstHeader.forEach(function(lbl) {
@@ -76,11 +75,10 @@ var OnMerge = {};
     return columns;
   }
   
-  
   // clear the columns in the destination sheet (except the key column) that we're about to updated
   // (so later, empty fields indicate: a row that is no longer used)
   
-  this.dstRangeClearColumns = function(columns, keyLabel, dstRange) {
+  function _dstRangeClearColumns(columns, keyLabel, dstRange) {
     
     if (dstRange == undefined) {
       return;
@@ -98,7 +96,7 @@ var OnMerge = {};
   
   // try to find the key in the rows that we started with
   
-  this.findKeyInDstRange = function(columns, keyLabel, dstRange, key) {
+  function _findKeyInDstRange(columns, keyLabel, dstRange, key) {
     
     if (dstRange == undefined) {
       return -1;
@@ -117,7 +115,7 @@ var OnMerge = {};
   // appends a row to the dst sheet
   // return updated range and idx for the new row
   
-  this.dstSheetInsertRow = function(columns, dstSheet, keyLabel, key) {
+  function _dstSheetInsertRow(columns, dstSheet, keyLabel, key) {
     
     dstSheet.appendRow(["new row"]);
     
@@ -131,7 +129,7 @@ var OnMerge = {};
   
   // copy values from the srcRow to the corresponding line in the dstRange
   
-  this.dstRangeCopyFromSrc = function(columns, keyLabel, srcRow, dstRange, dstRowIdx) {
+  function _dstRangeCopyFromSrc(columns, keyLabel, srcRow, dstRange, dstRowIdx) {
     
     for (cc in columns) {
       var isColumnWithKey = cc == keyLabel;
@@ -139,48 +137,54 @@ var OnMerge = {};
       if (!isColumnWithKey && dstColumnExists) {
         var srcColIdx = columns[cc].src;
         var dstColIdx = columns[cc].dst;
-        dstRange.getCell(dstRowIdx+1, dstColIdx+1).setValue(srcRow[srcColIdx]);  // getCell() is 1-based
+        dstRange.getCell(dstRowIdx + 1, dstColIdx + 1).setValue(srcRow[srcColIdx]);  // getCell() is 1-based
       }
     }  
   }
-  
-  this.main = function(srcSpreadsheetId, srcSheetName, dstSheetName) {
 
-    var srcSpreadsheet = Common.spreadsheetOpenById(srcSpreadsheetId);
-    var srcSheet = Common.sheetOpen(srcSpreadsheet, sheetName = srcSheetName, minNrOfDataRows = 2, requireLabelInA1 = true );
-    var srcValues = srcSheet.getDataRange().getValues();
-    var srcHeader = srcValues.shift();
-    
-    var dstSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    var dstSheet = Common.sheetOpen(dstSpreadsheet, sheetName = dstSheetName, minNrOfDataRows = 1, requireLabelInA1 = true);
-    var dstHeader = Common.sheetGetHeaderRange(dstSheet).getValues()[0];    
-    var columns = this.dstHeader2columns(srcHeader, dstHeader);
-    var keyLabel = Object.keys(columns)[0];
-    var dstRange = Common.sheetGetDataRange(dstSheet);
-    
-    this.dstRangeClearColumns(columns, keyLabel, dstRange);
-    
-    // for each row in the source, find the row with the corresponding key in the destination, 
-    // then update the relevant columns in the destination
-    
-    var that = this;  // forEach has its own "this"
-    srcValues.forEach(function(srcRow) {
-      
-      const key = srcRow[columns[keyLabel].src];
-      
-      var dstRowIdx = that.findKeyInDstRange(columns, keyLabel, dstRange, key);
-      if (dstRowIdx < 0) {
-        [dstRange, dstRowIdx] = that.dstSheetInsertRow(columns, dstSheet, keyLabel, key);
-      }    
-      that.dstRangeCopyFromSrc(columns, keyLabel, srcRow, dstRange, dstRowIdx)
-    });  
+  // validate parameters
+  
+  if (parameters.srcSpreadsheetId == undefined ||
+      parameters.srcSheetName == undefined ||
+      parameters.dstSheetName == undefined) {
+    throw("invalid parameters to onMerge()");
+  }
+  if (typeof parameters.srcSpreadsheetId !== "string" ||
+      typeof parameters.srcSheetName !== "string" ||
+      typeof parameters.dstSheetName !== "string" ) {
+    throw("invalid parameters type to onMerge()");
   }
   
-}).apply(OnMerge);
+  var srcSpreadsheet = Common.spreadsheetOpenById(parameters.srcSpreadsheetId);
+  var srcSheet = Common.sheetOpen(srcSpreadsheet, parameters.srcSheetName, 2, true );
+  var srcValues = srcSheet.getDataRange().getValues();
+  var srcHeader = srcValues.shift();
+  
+  var dstSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var dstSheet = Common.sheetOpen(dstSpreadsheet, parameters.dstSheetName, 1, true);
+  var dstHeader = Common.sheetGetHeaderRange(dstSheet).getValues()[0];    
+  var columns = _dstHeader2columns(srcHeader, dstHeader);
+  var keyLabel = Object.keys(columns)[0];
+  var dstRange = Common.sheetGetDataRange(dstSheet);
+  
+  _dstRangeClearColumns(columns, keyLabel, dstRange);
+  
+  // for each row in the source, find the row with the corresponding key in the destination, 
+  // then update the relevant columns in the destination
+  
+  srcValues.forEach(function(srcRow) {
+    
+    var key = srcRow[columns[keyLabel].src];	
+    var dstRowIdx = _findKeyInDstRange(columns, keyLabel, dstRange, key);
+    if (dstRowIdx < 0) {
+      [dstRange, dstRowIdx] = _dstSheetInsertRow(columns, dstSheet, keyLabel, key);
+    }    
+    _dstRangeCopyFromSrc(columns, keyLabel, srcRow, dstRange, dstRowIdx)
+  });  
+}
 
-function onMerge() {
-
-  OnMerge.main(srcSpreadsheetId = "REPLACE_WITH_YOUR_SHEET_ID",
-               srcSheetName = "go-persons", 
-               dstSheetName = "persons");
+function onMerge_dbg() {
+  onMerge({srcSpreadsheetId: "YourSpreadSheetId", // eg output from LDAP
+           srcSheetName: "go-persons", 
+           dstSheetName: "persons"});    
 }
