@@ -56,7 +56,7 @@ sheet.  Then it writes the preferred names and person type for each user.
 
 ## Run the Script
 
-  Create a script such as `onopen.gs` that contains an opOpen() function to add an
+  Create a script such as `onopen.gs` that contains an `opOpen()` function to add an
   item to the Google Scripts menu bar.  Remember to fill in your source spreadsheet
   identifier.  
 
