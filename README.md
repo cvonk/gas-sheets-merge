@@ -1,5 +1,10 @@
 # Merge Two Google Sheets (Google Apps Script for Sheets)
 
+[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/gas-sheets-merge)](https://github.com/cvonk/gas-sheets-merge/discussions)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/cvonk/gas-sheets-merge)
+![GitHub](https://img.shields.io/github/license/cvonk/gas-sheets-merge)
+
+
 Combines the information from two Google Sheets.  For example, the script can be used to 
 combine *people* information exported from a LDAP system with a project assignment list.
 
